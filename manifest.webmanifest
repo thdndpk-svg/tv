@@ -1,0 +1,18 @@
+{
+  "name": "한국 TV 온에어",
+  "short_name": "TV온에어",
+  "description": "국내 정규 방송과 뉴스 공식 온에어 바로가기 앱",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

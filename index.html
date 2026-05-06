@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="한국 TV 온에어" />
+  <title>한국 TV 온에어</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg1:#0b1020;
+      --bg2:#111a33;
+      --card:rgba(255,255,255,.10);
+      --card2:rgba(255,255,255,.15);
+      --line:rgba(255,255,255,.17);
+      --text:#f7fbff;
+      --muted:rgba(247,251,255,.68);
+      --gold:#ffd479;
+      --red:#ff7a8a;
+      --blue:#86d7ff;
+      --green:#9df2bd;
+      --purple:#c7adff;
+      --shadow:0 24px 70px rgba(0,0,0,.36);
+      --radius:26px;
+    }
+
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html, body {
+      margin:0;
+      min-height:100%;
+      background:var(--bg1);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,sans-serif;
+    }
+
+    body {
+      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom);
+      background:
+        radial-gradient(circle at 10% 4%, rgba(255,212,121,.24), transparent 29%),
+        radial-gradient(circle at 94% 10%, rgba(134,215,255,.20), transparent 32%),
+        radial-gradient(circle at 50% 100%, rgba(255,122,138,.18), transparent 34%),
+        linear-gradient(160deg, var(--bg1), var(--bg2) 58%, #050814);
+    }
+
+    button, input, a { font-family:inherit; }
+    .app { width:min(980px,100%); margin:0 auto; padding:18px 0 28px; }
+
+    .hero {
+      padding:20px 18px 18px;
+      border:1px solid var(--line);
+      background:linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      border-radius:32px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero:after {
+      content:"";
+      position:absolute;
+      right:-56px;
+      top:-58px;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:linear-gradient(145deg,var(--gold),var(--red));
+      opacity:.18;
+    }
+
+    .top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .logo {
+      width:52px;
+      height:52px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(145deg,var(--gold),#ff9f68);
+      color:#1b1200;
+      font-size:27px;
+      box-shadow:0 12px 30px rgba(255,180,90,.23);
+      flex:0 0 auto;
+    }
+
+    h1 { margin:0; font-size:24px; letter-spacing:-.7px; line-height:1.1; }
+    .sub { margin:5px 0 0; color:var(--muted); font-size:13px; line-height:1.4; }
+
+    .live-pill {
+      padding:8px 10px;
+      border-radius:999px;
+      color:#ffe8b5;
+      border:1px solid rgba(255,212,121,.40);
+      background:rgba(255,212,121,.12);
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .hero-grid {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:16px;
+      position:relative;
+      z-index:1;
+    }
+
+    @media(min-width:760px) {
+      .hero-grid { grid-template-columns:1.2fr .8fr; align-items:stretch; }
+    }
+
+    .now-box {
+      padding:15px;
+      border-radius:24px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.16);
+    }
+
+    .now-title { font-size:18px; font-weight:1000; letter-spacing:-.4px; }
+    .now-meta { color:var(--muted); font-size:13px; line-height:1.45; margin-top:5px; }
+
+    .action-box {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:9px;
+    }
+
+    button, .link-btn {
+      appearance:none;
+      border:0;
+      border-radius:18px;
+      min-height:48px;
+      padding:12px 13px;
+      font-weight:900;
+      font-size:14px;
+      color:var(--text);
+      background:rgba(255,255,255,.12);
+      border:1px solid var(--line);
+      cursor:pointer;
+      text-align:center;
+      text-decoration:none;
+      display:grid;
+      place-items:center;
+    }
+
+    button.primary, .link-btn.primary {
+      background:linear-gradient(145deg,var(--gold),#ffb35d);
+      color:#201400;
+      border:0;
+    }
+
+    button:active, .link-btn:active, .channel:active, .chip:active { transform:scale(.985); }
+
+    .search-wrap { display:grid; gap:10px; margin:14px 0 12px; }
+    .search {
+      width:100%;
+      outline:0;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.10);
+      color:var(--text);
+      border-radius:20px;
+      padding:14px 15px;
+      font-size:15px;
+    }
+    .search::placeholder { color:rgba(247,251,255,.50); }
+
+    .chips {
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding-bottom:3px;
+      scrollbar-width:none;
+    }
+    .chips::-webkit-scrollbar { display:none; }
+    .chip {
+      flex:0 0 auto;
+      min-height:38px;
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:13px;
+      color:var(--text);
+      background:rgba(255,255,255,.09);
+      border:1px solid var(--line);
+      font-weight:900;
+      cursor:pointer;
+    }
+    .chip.active {
+      color:#ffe7ad;
+      border-color:rgba(255,212,121,.55);
+      background:rgba(255,212,121,.20);
+    }
+
+    .section-title {
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:10px;
+      padding:2px 4px 10px;
+    }
+
+    .section-title h2 {
+      margin:0;
+      font-size:17px;
+      letter-spacing:-.45px;
+    }
+
+    .section-title span {
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:11px;
+    }
+
+    @media(min-width:760px) {
+      .grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    }
+
+    .channel {
+      min-height:142px;
+      border:1px solid var(--line);
+      background:linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06));
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:0 14px 38px rgba(0,0,0,.18);
+      cursor:pointer;
+      display:grid;
+      align-content:space-between;
+      gap:12px;
+      position:relative;
+      overflow:hidden;
+      text-align:left;
+    }
+
+    .channel:after {
+      content:"";
+      position:absolute;
+      width:96px;
+      height:96px;
+      right:-35px;
+      top:-32px;
+      border-radius:50%;
+      background:var(--accent, rgba(255,255,255,.18));
+      opacity:.25;
+    }
+
+    .channel.selected {
+      outline:2px solid rgba(255,212,121,.75);
+      background:linear-gradient(145deg, rgba(255,212,121,.22), rgba(255,255,255,.08));
+    }
+
+    .badge-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:8px;
+      position:relative;
+      z-index:1;
+    }
+
+    .badge {
+      width:44px;
+      height:44px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:var(--accent, var(--gold));
+      color:#0b1020;
+      font-weight:1000;
+      font-size:15px;
+      box-shadow:0 10px 24px rgba(0,0,0,.14);
+    }
+
+    .fav {
+      width:36px;
+      height:36px;
+      min-height:36px;
+      border-radius:14px;
+      padding:0;
+      background:rgba(255,255,255,.10);
+      position:relative;
+      z-index:2;
+      font-size:16px;
+    }
+
+    .fav.on { color:#ffd479; border-color:rgba(255,212,121,.55); background:rgba(255,212,121,.16); }
+
+    .channel h3 {
+      margin:0;
+      font-size:16px;
+      line-height:1.23;
+      letter-spacing:-.35px;
+      position:relative;
+      z-index:1;
+    }
+
+    .channel p {
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      position:relative;
+      z-index:1;
+    }
+
+    .mini-tags {
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      margin-top:8px;
+      position:relative;
+      z-index:1;
+    }
+
+    .mini-tag {
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.07);
+      color:rgba(247,251,255,.74);
+      border-radius:999px;
+      padding:5px 7px;
+      font-size:11px;
+      font-weight:800;
+    }
+
+    .empty {
+      display:none;
+      padding:22px 14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+      border-radius:24px;
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .guide {
+      margin-top:14px;
+      padding:14px 15px;
+      border-radius:24px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .footer {
+      color:rgba(247,251,255,.50);
+      font-size:12px;
+      line-height:1.55;
+      padding:18px 4px 2px;
+      text-align:center;
+    }
+
+    .toast {
+      position:fixed;
+      left:50%;
+      bottom:calc(18px + env(safe-area-inset-bottom));
+      transform:translateX(-50%) translateY(20px);
+      opacity:0;
+      width:min(430px, calc(100% - 28px));
+      background:rgba(8,10,18,.94);
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:13px 14px;
+      box-shadow:var(--shadow);
+      transition:.25s ease;
+      pointer-events:none;
+      font-size:13px;
+      z-index:99;
+    }
+
+    .toast.show {
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="top">
+        <div class="brand">
+          <div class="logo">📺</div>
+          <div>
+            <h1>한국 TV 온에어</h1>
+            <p class="sub">국내 정규 방송 · 뉴스 · 공영 채널 공식 바로보기</p>
+          </div>
+        </div>
+        <div class="live-pill">LIVE</div>
+      </div>
+
+      <div class="hero-grid">
+        <div class="now-box">
+          <div class="now-title" id="nowTitle">채널을 선택하세요</div>
+          <div class="now-meta" id="nowMeta">공식 온에어/라이브 페이지로 연결되는 안전한 TV 앱입니다.</div>
+        </div>
+        <div class="action-box">
+          <a class="link-btn primary" id="watchBtn" href="#" target="_blank" rel="noopener">시청하기</a>
+          <button id="copyBtn">링크복사</button>
+          <button id="favoriteBtn">즐겨찾기</button>
+          <button id="clearBtn">초기화</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="search-wrap">
+      <input class="search" id="searchInput" type="search" placeholder="채널 검색: KBS, MBC, SBS, EBS, YTN..." />
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="section-title">
+      <h2 id="listTitle">전체 채널</h2>
+      <span id="countText">0개</span>
+    </div>
+
+    <section class="grid" id="channelGrid"></section>
+    <div class="empty" id="emptyBox">검색 결과가 없습니다.</div>
+
+    <div class="guide">
+      이 앱은 방송 영상을 직접 재송출하지 않습니다. 각 방송사의 공식 온에어/라이브/유튜브 공식 채널로 연결합니다.
+      일부 채널은 로그인, 광고 시청, 앱 설치, 지역/기기 제한이 있을 수 있습니다.
+    </div>
+
+    <p class="footer">
+      개인용 바로가기 앱입니다. 방송사 정책 또는 주소 변경 시 일부 링크가 바뀔 수 있습니다.
+    </p>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const channels = [
+      {
+        name: "KBS 온에어",
+        group: "공영",
+        desc: "KBS 1TV · 2TV · 뉴스 · 지역국",
+        icon: "KBS",
+        accent: "#ffd479",
+        tags: ["공영", "지상파", "온에어"],
+        url: "https://onair.kbs.co.kr/"
+      },
+      {
+        name: "KBS 1TV",
+        group: "공영",
+        desc: "KBS 1TV 공식 온에어",
+        icon: "1TV",
+        accent: "#ffcb74",
+        tags: ["KBS", "1TV"],
+        url: "https://onair.kbs.co.kr/m/index.html?ch_code=11&sname=onair&stype=live"
+      },
+      {
+        name: "KBS 2TV",
+        group: "공영",
+        desc: "KBS 2TV 공식 온에어",
+        icon: "2TV",
+        accent: "#ffb56b",
+        tags: ["KBS", "2TV"],
+        url: "https://onair.kbs.co.kr/m/index.html?ch_code=12&sname=onair&stype=live"
+      },
+      {
+        name: "KBS NEWS 24",
+        group: "뉴스",
+        desc: "KBS 뉴스 라이브",
+        icon: "N24",
+        accent: "#86d7ff",
+        tags: ["KBS", "뉴스"],
+        url: "https://onair.kbs.co.kr/"
+      },
+      {
+        name: "MBC 온에어",
+        group: "지상파",
+        desc: "MBC 공식 온에어/라이브",
+        icon: "MBC",
+        accent: "#8bd3ff",
+        tags: ["MBC", "지상파"],
+        url: "https://onair.imbc.com/"
+      },
+      {
+        name: "MBC 모바일",
+        group: "지상파",
+        desc: "iMBC 모바일 온에어",
+        icon: "mM",
+        accent: "#9fd7ff",
+        tags: ["MBC", "모바일"],
+        url: "https://m.imbc.com/onair"
+      },
+      {
+        name: "SBS 라이브",
+        group: "지상파",
+        desc: "SBS 공식 라이브",
+        icon: "SBS",
+        accent: "#ff8fab",
+        tags: ["SBS", "라이브"],
+        url: "https://www.sbs.co.kr/live"
+      },
+      {
+        name: "SBS 모바일 라이브",
+        group: "지상파",
+        desc: "SBS 모바일 라이브 페이지",
+        icon: "mS",
+        accent: "#ff9bb3",
+        tags: ["SBS", "모바일"],
+        url: "https://www.sbs.co.kr/m/live/S01"
+      },
+      {
+        name: "EBS 온에어",
+        group: "공영",
+        desc: "EBS 공식 온에어",
+        icon: "EBS",
+        accent: "#a7e7ff",
+        tags: ["EBS", "교육"],
+        url: "https://www.ebs.co.kr/onair"
+      },
+      {
+        name: "YTN 라이브",
+        group: "뉴스",
+        desc: "24시간 뉴스 라이브",
+        icon: "YTN",
+        accent: "#86b7ff",
+        tags: ["뉴스", "실시간"],
+        url: "https://www.ytn.co.kr/_hd/hd_live.html"
+      },
+      {
+        name: "YTN 모바일",
+        group: "뉴스",
+        desc: "YTN 모바일 실시간",
+        icon: "mY",
+        accent: "#7bb0ff",
+        tags: ["뉴스", "모바일"],
+        url: "https://m.ytn.co.kr/live.php"
+      },
+      {
+        name: "연합뉴스TV",
+        group: "뉴스",
+        desc: "연합뉴스TV 공식 라이브",
+        icon: "연합",
+        accent: "#b7d2ff",
+        tags: ["뉴스", "라이브"],
+        url: "https://www.yonhapnewstv.co.kr/live"
+      },
+      {
+        name: "연합뉴스TV 유튜브",
+        group: "뉴스",
+        desc: "공식 유튜브 라이브",
+        icon: "YT",
+        accent: "#ff7a8a",
+        tags: ["뉴스", "유튜브"],
+        url: "https://www.youtube.com/@yonhapnewstv"
+      },
+      {
+        name: "JTBC 뉴스",
+        group: "뉴스",
+        desc: "JTBC News 공식 채널",
+        icon: "JT",
+        accent: "#c7adff",
+        tags: ["뉴스", "유튜브"],
+        url: "https://www.youtube.com/@jtbc_news"
+      },
+      {
+        name: "MBN 뉴스",
+        group: "뉴스",
+        desc: "MBN News 공식 채널",
+        icon: "MBN",
+        accent: "#ffd479",
+        tags: ["뉴스", "유튜브"],
+        url: "https://www.youtube.com/@MBNNews"
+      },
+      {
+        name: "TV조선 뉴스",
+        group: "뉴스",
+        desc: "TVCHOSUN News 공식 채널",
+        icon: "TV조",
+        accent: "#ffb56b",
+        tags: ["뉴스", "유튜브"],
+        url: "https://www.youtube.com/@tvchosunnews"
+      },
+      {
+        name: "채널A 뉴스",
+        group: "뉴스",
+        desc: "Channel A News 공식 채널",
+        icon: "A",
+        accent: "#86d7ff",
+        tags: ["뉴스", "유튜브"],
+        url: "https://www.youtube.com/@channelanews"
+      },
+      {
+        name: "OBS",
+        group: "지역",
+        desc: "OBS 공식 홈페이지/온에어",
+        icon: "OBS",
+        accent: "#9df2bd",
+        tags: ["지역", "수도권"],
+        url: "https://www.obs.co.kr/"
+      },
+      {
+        name: "국회방송",
+        group: "공공",
+        desc: "국회방송 공식 사이트",
+        icon: "NAT",
+        accent: "#d5c1ff",
+        tags: ["공공", "정책"],
+        url: "https://www.natv.go.kr/"
+      },
+      {
+        name: "아리랑TV",
+        group: "공공",
+        desc: "Arirang TV 공식 사이트",
+        icon: "ARI",
+        accent: "#ffcf7a",
+        tags: ["공공", "글로벌"],
+        url: "https://www.arirang.com/"
+      }
+    ];
+
+    const groups = ["전체", "즐겨찾기", "최근본채널", ...Array.from(new Set(channels.map(c => c.group)))];
+
+    const grid = document.getElementById("channelGrid");
+    const chips = document.getElementById("chips");
+    const searchInput = document.getElementById("searchInput");
+    const nowTitle = document.getElementById("nowTitle");
+    const nowMeta = document.getElementById("nowMeta");
+    const watchBtn = document.getElementById("watchBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const favoriteBtn = document.getElementById("favoriteBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const countText = document.getElementById("countText");
+    const listTitle = document.getElementById("listTitle");
+    const emptyBox = document.getElementById("emptyBox");
+    const toast = document.getElementById("toast");
+
+    let selected = null;
+    let activeGroup = "전체";
+
+    function loadFavorites() {
+      try { return JSON.parse(localStorage.getItem("tvFavorites") || "[]"); }
+      catch(e) { return []; }
+    }
+
+    function saveFavorites(list) {
+      localStorage.setItem("tvFavorites", JSON.stringify(list));
+    }
+
+    function loadRecent() {
+      try { return JSON.parse(localStorage.getItem("tvRecent") || "[]"); }
+      catch(e) { return []; }
+    }
+
+    function saveRecent(list) {
+      localStorage.setItem("tvRecent", JSON.stringify(list));
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    function isFavorite(name) {
+      return loadFavorites().includes(name);
+    }
+
+    function toggleFavorite(name) {
+      let favs = loadFavorites();
+      if (favs.includes(name)) {
+        favs = favs.filter(x => x !== name);
+        showToast("즐겨찾기에서 뺐어요.");
+      } else {
+        favs.unshift(name);
+        showToast("즐겨찾기에 추가했어요.");
+      }
+      saveFavorites(favs);
+      updateFavoriteButton();
+      renderChannels();
+    }
+
+    function addRecent(name) {
+      let recent = loadRecent().filter(x => x !== name);
+      recent.unshift(name);
+      recent = recent.slice(0, 8);
+      saveRecent(recent);
+    }
+
+    function channelMatches(channel) {
+      const q = searchInput.value.trim().toLowerCase();
+      const favs = loadFavorites();
+      const recent = loadRecent();
+
+      let groupOk = true;
+      if (activeGroup === "즐겨찾기") groupOk = favs.includes(channel.name);
+      else if (activeGroup === "최근본채널") groupOk = recent.includes(channel.name);
+      else if (activeGroup !== "전체") groupOk = channel.group === activeGroup;
+
+      const text = `${channel.name} ${channel.group} ${channel.desc} ${channel.tags.join(" ")}`.toLowerCase();
+      const searchOk = !q || text.includes(q);
+      return groupOk && searchOk;
+    }
+
+    function sortForGroup(items) {
+      if (activeGroup === "즐겨찾기") {
+        const favs = loadFavorites();
+        return items.sort((a,b) => favs.indexOf(a.name) - favs.indexOf(b.name));
+      }
+      if (activeGroup === "최근본채널") {
+        const recent = loadRecent();
+        return items.sort((a,b) => recent.indexOf(a.name) - recent.indexOf(b.name));
+      }
+      return items;
+    }
+
+    function renderChips() {
+      chips.innerHTML = groups.map(group => `
+        <button class="chip ${group === activeGroup ? "active" : ""}" data-group="${group}">${group}</button>
+      `).join("");
+
+      chips.querySelectorAll(".chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeGroup = btn.dataset.group;
+          renderChips();
+          renderChannels();
+        });
+      });
+    }
+
+    function renderChannels() {
+      let items = channels.filter(channelMatches);
+      items = sortForGroup(items);
+
+      countText.textContent = `${items.length}개`;
+      listTitle.textContent = activeGroup === "전체" ? "전체 채널" : activeGroup;
+      emptyBox.style.display = items.length ? "none" : "block";
+
+      grid.innerHTML = items.map(channel => `
+        <article class="channel ${selected && selected.name === channel.name ? "selected" : ""}"
+          data-name="${channel.name}"
+          style="--accent:${channel.accent}">
+          <div class="badge-row">
+            <div class="badge">${channel.icon}</div>
+            <button class="fav ${isFavorite(channel.name) ? "on" : ""}" data-fav="${channel.name}" aria-label="즐겨찾기">★</button>
+          </div>
+          <div>
+            <h3>${channel.name}</h3>
+            <p>${channel.group} · ${channel.desc}</p>
+            <div class="mini-tags">${channel.tags.map(t => `<span class="mini-tag">${t}</span>`).join("")}</div>
+          </div>
+        </article>
+      `).join("");
+
+      grid.querySelectorAll(".channel").forEach(card => {
+        card.addEventListener("click", (event) => {
+          if (event.target.closest(".fav")) return;
+          const channel = channels.find(c => c.name === card.dataset.name);
+          selectChannel(channel, true);
+        });
+      });
+
+      grid.querySelectorAll(".fav").forEach(btn => {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          toggleFavorite(btn.dataset.fav);
+        });
+      });
+    }
+
+    function selectChannel(channel, openNow = false) {
+      selected = channel;
+      nowTitle.textContent = channel.name;
+      nowMeta.textContent = `${channel.group} · ${channel.desc}`;
+      watchBtn.href = channel.url;
+      addRecent(channel.name);
+      localStorage.setItem("lastTvChannel", channel.name);
+      updateFavoriteButton();
+      renderChannels();
+
+      if (openNow) {
+        window.open(channel.url, "_blank", "noopener");
+      }
+    }
+
+    function updateFavoriteButton() {
+      if (!selected) {
+        favoriteBtn.textContent = "즐겨찾기";
+        return;
+      }
+      favoriteBtn.textContent = isFavorite(selected.name) ? "★ 해제" : "★ 저장";
+    }
+
+    function copySelectedLink() {
+      if (!selected) {
+        showToast("먼저 채널을 선택하세요.");
+        return;
+      }
+
+      const text = `${selected.name}\n${selected.url}`;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text)
+          .then(() => showToast("채널 링크를 복사했어요."))
+          .catch(() => showToast("복사 실패. 브라우저 권한을 확인하세요."));
+      } else {
+        showToast("이 브라우저에서는 복사가 제한될 수 있어요.");
+      }
+    }
+
+    function clearData() {
+      localStorage.removeItem("tvFavorites");
+      localStorage.removeItem("tvRecent");
+      localStorage.removeItem("lastTvChannel");
+      selected = null;
+      nowTitle.textContent = "채널을 선택하세요";
+      nowMeta.textContent = "공식 온에어/라이브 페이지로 연결되는 안전한 TV 앱입니다.";
+      watchBtn.href = "#";
+      updateFavoriteButton();
+      renderChannels();
+      showToast("저장된 즐겨찾기와 최근 기록을 지웠어요.");
+    }
+
+    searchInput.addEventListener("input", renderChannels);
+    copyBtn.addEventListener("click", copySelectedLink);
+    clearBtn.addEventListener("click", clearData);
+    favoriteBtn.addEventListener("click", () => {
+      if (!selected) {
+        showToast("먼저 채널을 선택하세요.");
+        return;
+      }
+      toggleFavorite(selected.name);
+    });
+
+    watchBtn.addEventListener("click", (event) => {
+      if (!selected || watchBtn.getAttribute("href") === "#") {
+        event.preventDefault();
+        showToast("먼저 채널을 선택하세요.");
+      }
+    });
+
+    renderChips();
+    renderChannels();
+
+    const lastName = localStorage.getItem("lastTvChannel");
+    const last = channels.find(c => c.name === lastName);
+    if (last) {
+      selectChannel(last, false);
+    } else {
+      watchBtn.href = "#";
+    }
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    }
+  </script>
+</body>
+</html>
